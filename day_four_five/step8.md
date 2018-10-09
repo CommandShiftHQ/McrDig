@@ -162,3 +162,115 @@ dataSource.post(`/posts/${postId}/comments`, comment, function(createdComment) {
 Reload your page again, and re-submit the form. You should now see the new comment being added to the list of comments. 🙌
 ***
 
+The final problem we have to solve is what happens when we submit the form more than once - give it a go and see. We are back to the default behaviour of the form, before we added the event handler and prevented the default behaviour.
+
+**Can you think why this might be?**
+
+When we re-render the page, we are actually re-rendering everything inside of the `#root` div. Every element inside of the `#root` div is deleted, and replaced with the new HTML. So the `<form>` that we see after the re-render is not the same one that we submitted before the re-render. This means it does not have the event listener attached to it.
+
+This means we need to attach the event listener to this new version of the form.
+
+If our current code looks like this:
+
+```js
+dom.render(PostPage(post, comments));
+let commentForm = document.getElementById('comment-form');
+commentForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const comment = {
+    name: document.getElementById('comment-form-name').value,
+    email: document.getElementById('comment-form-email').value,
+    body: document.getElementById('comment-form-body').value,
+  };
+  dataSource.post(`/posts/${postId}/comments`, comment, function(createdComment) {
+    comments.push(createdComment);
+    dom.render(PostPage(post, comments));
+  });
+});
+```
+
+Then attaching the event listener again might look like this:
+
+```js
+dom.render(PostPage(post, comments));
+
+let commentForm = document.getElementById('comment-form');
+commentForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const comment = {
+    name: document.getElementById('comment-form-name').value,
+    email: document.getElementById('comment-form-email').value,
+    body: document.getElementById('comment-form-body').value,
+  };
+  dataSource.post(`/posts/${postId}/comments`, comment, function(createdComment) {
+    comments.push(createdComment);
+    dom.render(PostPage(post, comments));
+    // repeat the code from above to reattach the event listener to the form after re-rendering
+    commentForm = document.getElementById('comment-form');
+    commentForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const comment = {
+        name: document.getElementById('comment-form-name').value,
+        email: document.getElementById('comment-form-email').value,
+        body: document.getElementById('comment-form-body').value,
+      };
+      dataSource.post(`/posts/${postId}/comments`, comment, function(createdComment) {
+        comments.push(createdComment);
+        dom.render(PostPage(post, comments));
+      });
+    });
+  });
+});
+```
+
+This approach 1) is repetitive, and 2) will only allow us to submit the form twice before it breaks again.
+
+If we wanted to submit the form 3 times, this approach would end up looking like this:
+
+```js
+dom.render(PostPage(post, comments));
+
+let commentForm = document.getElementById('comment-form');
+commentForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const comment = {
+    name: document.getElementById('comment-form-name').value,
+    email: document.getElementById('comment-form-email').value,
+    body: document.getElementById('comment-form-body').value,
+  };
+  dataSource.post(`/posts/${postId}/comments`, comment, function(createdComment) {
+    comments.push(createdComment);
+    dom.render(PostPage(post, comments));
+    // repeat the code from above to reattach the event listener to the form after re-rendering
+    commentForm = document.getElementById('comment-form');
+    commentForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const comment = {
+        name: document.getElementById('comment-form-name').value,
+        email: document.getElementById('comment-form-email').value,
+        body: document.getElementById('comment-form-body').value,
+      };
+      dataSource.post(`/posts/${postId}/comments`, comment, function(createdComment) {
+        comments.push(createdComment);
+        dom.render(PostPage(post, comments));
+        // repeat the code from above to reattach the event listener to the form after re-rendering
+        commentForm = document.getElementById('comment-form');
+        commentForm.addEventListener('submit', function(event) {
+          event.preventDefault();
+          const comment = {
+            name: document.getElementById('comment-form-name').value,
+            email: document.getElementById('comment-form-email').value,
+            body: document.getElementById('comment-form-body').value,
+          };
+          dataSource.post(`/posts/${postId}/comments`, comment, function(createdComment) {
+            comments.push(createdComment);
+            dom.render(PostPage(post, comments));
+          });
+        });
+      });
+    });
+  });
+});
+```
+
+:scream_cat: :scream_cat: :scream_cat:
