@@ -43,9 +43,18 @@ In this file, create a component function that returns the html for a form, with
 
   ```html
   <form>
-    <input type="text" />
-    <input type="text" />
-    <textarea></textarea>
+    <label for="name">
+      Name:
+      <input name="name" type="text" />
+    </label>
+    <label for="email">
+      Email:
+      <input name="email" type="email" />
+    </label>
+    <label for="email">
+      Email:
+      <textarea name="body"></textarea>
+    </label>
     <button type="submit" />
   </form>
   ```
