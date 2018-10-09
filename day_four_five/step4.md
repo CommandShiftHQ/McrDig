@@ -69,6 +69,20 @@ One cool takeaway from what we have achieved here is that we are able to **compo
 
 Expanding on this, we might be able to decompose the parts of our page even further - we could potentially make an `Image` component, or maybe `Header` and `Footer` components which can be reused over and over, to save us from rewriting the same HTML multiple times.
 
+We could also make some `layout` components, such as `PostsPage`, which might look something like this:
+
+```js
+function PostsPage(posts) {
+  return `
+    ${Header()}
+    ${Posts(posts)}
+    ${Footer()}
+  `;
+}
+```
+
+Layouts will allow us to render multiple components next to each other, whilst also keeping the component logic separate, allowing them to be reused in different places.
+
 ***
 :exclamation:
 You will need to ensure that you import the `Posts.js` file into your `index.html` file **after** `Post.js`, as `Posts` relies on the `Post` method already being in memory, and JavaScript is procedural - that is, it runs line by line.
