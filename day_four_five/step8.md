@@ -74,7 +74,7 @@ function CommentForm() {
 
 This gives us a framework for collecting the data we need. Now we just need to collect it in our JavaScript, and send it to the server when the submit button is clicked.
 
-### Submitting the form
+## Submitting the form
 Whenever a user interacts with any DOM element, an event is fired. When you hover on an element, an event is fired. When you click on a button, an event is fired. By default these events are largely ignored and forgotten about. But we can tap into these to make our page interactive and respond to user input.
 
 The mechanism for doing this is called an **event listener**, which is basically a function that is attached to a DOM element, and gets triggered whenever that element fires a particular type of event.
@@ -115,8 +115,30 @@ Thankfully, event objects have a `preventDefault` method attached to them, which
 ```js
 commentForm.addEventListener('submit', function(event) {
   event.preventDefault();
-  console.log(event);
 });
 ```
 
 Now we have prevented the default behaviour of the form, we need to tell it what we *do* want to happen when we submit the form.
+
+What we want to do is get the values from the form inputs, collate them into a comment-shaped object, and send this new object to the API in a POST request. 
+
+```js
+commentForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  const comment = {
+    name: document.getElementById('comment-form-name').value,
+    email: document.getElementById('comment-form-email').value,
+    body: document.getElementById('comment-form-body').value,
+  };
+  dataSource.post(`/posts/${postId}/comments`, comment, function(createdComment) {
+    console.log(createdComment);
+  });
+});
+```
+Here we are selecting the name input element by its id attribute (`comment-form-name`), and retrieving the `value` atribute from the element. We do the same with the email and body inputs, and put these values into an object representing our new comment.
+
+We then use `dataSource.post` to make a POST request to `/posts/${postId}/comments`, with the comment object passed as the request body.
+
+### Try it out!
+Reload your page again, and re-submit the form. Take a look at the network tab in your browser developer tools. Can you see the request being sent. What data are we sending, and what is the response we are receiving?
+
