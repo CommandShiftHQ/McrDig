@@ -273,4 +273,71 @@ commentForm.addEventListener('submit', function(event) {
 });
 ```
 
-:scream_cat: :scream_cat: :scream_cat:
+:scream_cat: :scream_cat: :scream_cat: We obviously need a new approach.
+
+The repetition of the code here is an indication that we can bring the repeated code out into a function:
+
+```js
+const dom = new DOM('#root');
+const dataSource = new DataSource('https://jsonplaceholder.typicode.com');
+
+const queryParams = new URLSearchParams(window.location.search);
+const postId = queryParams.get('id');
+
+// the code in this function was repeated mutiple times in the above example
+// it needs to be invoked every time we re-render the dom
+// by putting it into a function, we only need to write the code once
+function attachFormEventListener(post, comments) {
+  const commentForm = document.getElementById('comment-form');
+  commentForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const comment = {
+      name: document.getElementById('comment-form-name').value,
+      email: document.getElementById('comment-form-email').value,
+      body: document.getElementById('comment-form-body').value,
+    };
+    dataSource.post(`/posts/${postId}/comments`, comment, (createdComment) {
+      comments.push(createdComment);
+      dom.render(PostPage(post, comments));
+    });
+  });
+}
+
+dataSource.get(`/posts/${postId}`, function (post) {
+  dataSource.get(`/posts/${postId}/comments`, function(comments) {
+    dom.render(PostPage(post, comments));
+    attachFormEventListener(post, comments); // we invoke the function here
+  });
+});
+```
+
+Putting the logic into a function is a step in the right direction, but the function is still only called once, after the initial re-render. We need it to be invoked after every re-render.
+
+To achieve this, we can use a technique called **recursion**. This is basically where a function invokes itself in order to perform the same task multiple times.
+
+With recursion we need to be careful - allowing a function to call itself is probably the easiest way of creating an infinite loop. We need to control the conditions under which the function can call itself.
+
+Consider the following code, which would (attempt to) `console.log` every number from 0 to infinity (run this code at your peril...):
+
+```js
+function infiniteLog(number) {
+  console.log(number);
+  infiniteLog(number + 1);
+}
+
+infiniteLog(0);
+```
+
+To limit how high we want the logging to go (lets say 100), we could modify it like this (feel free to run this one!):
+
+```js
+function finiteLog(number) {
+  console.log(number);
+  if (number <= 100) {
+    finiteLog(number + 1);
+  }
+}
+
+finiteLog(0);
+```
+
