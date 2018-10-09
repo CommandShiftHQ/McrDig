@@ -2,7 +2,7 @@
 
 Again, how you solve this step is up to you.
 
-The challenge is to, on the individual post page, retrieve from the API a list of comments associated with the post, and render these underneath the post.
+The challenge is, on the individual post page, to retrieve from the API a list of comments associated with the post, and render these underneath the post.
 
 The API endpoint for retrieving comments is `GET /posts/{post.id}/comments`.
 
