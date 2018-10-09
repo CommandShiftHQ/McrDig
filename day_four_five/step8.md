@@ -51,8 +51,8 @@ In this file, create a component function that returns the html for a form, with
       Email:
       <input name="email" type="email" />
     </label>
-    <label for="email">
-      Email:
+    <label for="body">
+      Comment:
       <textarea name="body"></textarea>
     </label>
     <button type="submit" />
