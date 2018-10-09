@@ -103,9 +103,11 @@ Event handler callbacks are invoked with an object representing the event. These
 
 In this case, the form submit event isn't particularly interesting, but it's always worth `console.log`ging the event anyway, to see if you can use anything.
 
+***
 ### Try it out!
 
 Refresh your page, fill out the form and submit it. Take a look in your browser console and look at the object that was logged. What information can you see?
+***
 
 You will probably also have noticed that the browser reloaded/redirected when we submitted the form - we don't want this behaviour.
 It occured because some events have default behaviour associated with them. In this case, submitting a html `form` causes the browser to navigate to a URL with the form values as query parameters.
@@ -139,6 +141,24 @@ Here we are selecting the name input element by its id attribute (`comment-form-
 
 We then use `dataSource.post` to make a POST request to `/posts/${postId}/comments`, with the comment object passed as the request body.
 
+***
 ### Try it out!
 Reload your page again, and re-submit the form. Take a look at the network tab in your browser developer tools. Can you see the request being sent. What data are we sending, and what is the response we are receiving?
+***
+
+So we can successfully create a comment on a post. But that comment isn't showing up after we post it.
+
+We now need to re-render the page with the new comment added to the existing array of comments:
+
+```js
+dataSource.post(`/posts/${postId}/comments`, comment, function(createdComment) {
+  comments.push(createdComment);
+  dom.render(PostPage(post, comments));
+});
+```
+
+***
+### Try it out!
+Reload your page again, and re-submit the form. You should now see the new comment being added to the list of comments. 🙌
+***
 
