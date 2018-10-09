@@ -38,36 +38,85 @@ Create a file `components/CommentForm.js` and import it into `post.html`.
 
 In this file, create a component function that returns the html for a form, with the appropriate input fields for collecting a name, email and longer text body, as well as a submit button.
 
+Give each of these form elements a unique id attribute, and give the form as a whole an id of `comment-form`
+
 <details>
   <summary>Spoiler</summary>
 
   ```js
 function CommentForm() {
   return `
-    <form>
+    <form id="comment-form">
       <div>
         <label for="name">
           Name:
-          <input name="name" type="text" />
+          <input id="comment-form-name" name="name" type="text" />
         </label>
       </div>
       <div>
         <label for="email">
           Email:
-          <input name="email" type="email" />
+          <input id="comment-form-email" name="email" type="email" />
         </label>
       </div>
       <div>
         <label for="body">
           Comment:
-          <textarea name="body"></textarea>
+          <textarea id="comment-form-body" name="body"></textarea>
         </label>
       </div>
-      <button type="submit">Submit</button>
+      <button id="comment-form-submit" type="submit">Submit</button>
     </form>
   `;
 }
-
   ```
-
 </details>
+
+This gives us a framework for collecting the data we need. Now we just need to collect it in our JavaScript, and send it to the server when the submit button is clicked.
+
+### Submitting the form
+Whenever a user interacts with any DOM element, an event is fired. When you hover on an element, an event is fired. When you click on a button, an event is fired. By default these events are largely ignored and forgotten about. But we can tap into these to make our page interactive and respond to user input.
+
+The mechanism for doing this is called an **event listener**, which is basically a function that is attached to a DOM element, and gets triggered whenever that element fires a particular type of event.
+
+#### :books: - [Event Listeners](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener)
+
+The `form` element fires a `submit` event when we click on it's submit button.
+
+So in order to make our `POST` request to create a comment when the form is submitted, we need to listen to this event on our form:
+
+First, find the comment form element by it's `id` attribute:
+
+```js
+const commentForm = document.getElementById('comment-form');
+```
+
+To this element, add an event listener that listens to `submit` events using the `addEventListener` method:
+
+```js
+commentForm.addEventListener('submit', function(event) {
+  console.log(event);
+});
+```
+
+Event handler callbacks are invoked with an object representing the event. These have a lot of information in them, some of which is useful, and most of which you'll never need.
+
+In this case, the form submit event isn't particularly interesting, but it's always worth `console.log`ging the event anyway, to see if you can use anything.
+
+### Try it out!
+
+Refresh your page, fill out the form and submit it. Take a look in your browser console and look at the object that was logged. What information can you see?
+
+You will probably also have noticed that the browser reloaded/redirected when we submitted the form - we don't want this behaviour.
+It occured because some events have default behaviour associated with them. In this case, submitting a html `form` causes the browser to navigate to a URL with the form values as query parameters.
+Thankfully, event objects have a `preventDefault` method attached to them, which exists precisely for occasions like this. Call it in your event handler function, then reload the application and try submitting the form again:
+
+
+```js
+commentForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  console.log(event);
+});
+```
+
+Now we have prevented the default behaviour of the form, we need to tell it what we *do* want to happen when we submit the form.
