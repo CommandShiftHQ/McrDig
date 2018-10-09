@@ -41,22 +41,33 @@ In this file, create a component function that returns the html for a form, with
 <details>
   <summary>Spoiler</summary>
 
-  ```html
-  <form>
-    <label for="name">
-      Name:
-      <input name="name" type="text" />
-    </label>
-    <label for="email">
-      Email:
-      <input name="email" type="email" />
-    </label>
-    <label for="body">
-      Comment:
-      <textarea name="body"></textarea>
-    </label>
-    <button type="submit" />
-  </form>
+  ```js
+function CommentForm() {
+  return `
+    <form>
+      <div>
+        <label for="name">
+          Name:
+          <input name="name" type="text" />
+        </label>
+      </div>
+      <div>
+        <label for="email">
+          Email:
+          <input name="email" type="email" />
+        </label>
+      </div>
+      <div>
+        <label for="body">
+          Comment:
+          <textarea name="body"></textarea>
+        </label>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  `;
+}
+
   ```
 
 </details>
