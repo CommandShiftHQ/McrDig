@@ -315,9 +315,9 @@ Putting the logic into a function is a step in the right direction, but the func
 
 To achieve this, we can use a technique called **recursion**. This is basically where a function invokes itself in order to perform the same task multiple times.
 
-With recursion we need to be careful - allowing a function to call itself is probably the easiest way of creating an infinite loop. We need to control the conditions under which the function can call itself.
+With recursion we need to be careful - allowing a function to call itself is probably the easiest way of creating an infinite loop. We need to control the conditions under which the function can call itself, so it doesn't just invoke itself automatically over and over again.
 
-Consider the following code, which would (attempt to) `console.log` every number from 0 to infinity (run this code at your peril...):
+Consider the following code example, which would (attempt to) `console.log` every number from 0 to infinity (run this code at your peril...):
 
 ```js
 function infiniteLog(number) {
@@ -341,3 +341,20 @@ function finiteLog(number) {
 finiteLog(0);
 ```
 
+In our case, we only want the function to be called again in the case that the form has been submitted and the page has re-rendered. To do this we should add the recursive call into the event handler, after the re-render.
+
+Because the event handler is only triggered when the form is submitted, our recursive adding of new event-handlers will only happen after the form is submitted.
+
+To finish off, update the `attachFormEventListener` function as follows:
+
+```js
+...
+dataSource.post(`/posts/${postId}/comments`, comment, (createdComment) {
+  comments.push(createdComment);
+  dom.render(PostPage(post, comments));
+  attachFormEventListener(post, comments));
+});
+...
+```
+
+This will now add the missing event handlers to the new form elements whenever they are re-rendered, and it will do it no matter how many times we submit the form.
